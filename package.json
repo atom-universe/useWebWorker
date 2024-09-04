@@ -1,6 +1,6 @@
 {
-  "name": "@trickle/useWebWorker",
-  "version": "0.0.0",
+  "name": "@trickle/use-web-worker",
+  "version": "0.0.1",
   "description": "use web worker in style of hook in react",
   "module": "dist/esm/index.js",
   "types": "dist/esm/index.d.ts",
