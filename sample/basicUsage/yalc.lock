@@ -1,0 +1,10 @@
+{
+  "version": "v1",
+  "packages": {
+    "@trickle/useWebWorker": {
+      "version": "0.0.1",
+      "signature": "1d55f640b235e082789bff2bd2bd6050",
+      "file": true
+    }
+  }
+}
