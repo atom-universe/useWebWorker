@@ -1,35 +1,20 @@
 {
-  "name": "@trickle/use-web-worker",
-  "version": "0.0.1",
-  "description": "use web worker in style of hook in react",
-  "module": "dist/esm/index.js",
-  "types": "dist/esm/index.d.ts",
+  "name": "use-web-worker-monorepo",
+  "private": true,
+  "version": "1.0.0",
+  "description": "React hooks for Web Workers with TypeScript support",
   "scripts": {
-    "dev": "father dev",
-    "build": "father build",
-    "build:deps": "father prebundle",
-    "prepublishOnly": "father doctor && npm run build"
+    "dev": "pnpm -r run dev",
+    "build": "pnpm -r run build",
+    "lint": "pnpm -r run lint",
+    "example": "pnpm --filter @use-web-worker/core build && pnpm --filter @use-web-worker/examples dev"
   },
-  "keywords": [],
-  "authors": [
-    "Carbon <Carbon1024@foxmail.com>"
+  "keywords": [
+    "react",
+    "hooks",
+    "web-worker",
+    "typescript"
   ],
-  "license": "MIT",
-  "files": [
-    "dist",
-    "compiled"
-  ],
-  "publishConfig": {
-    "access": "public"
-  },
-  "devDependencies": {
-    "@types/react": "^18.3.4",
-    "father": "^4.5.1-beta.4",
-    "react": "^17.0.0 || ^18.0.0",
-    "react-dom": "^17.0.0 || ^18.0.0"
-  },
-  "peerDependencies": {
-    "react": "^17.0.0 || ^18.0.0",
-    "react-dom": "^17.0.0 || ^18.0.0"
-  }
+  "author": "",
+  "license": "MIT"
 }
