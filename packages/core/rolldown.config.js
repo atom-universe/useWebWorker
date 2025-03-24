@@ -3,11 +3,11 @@ export default {
   output: [
     {
       file: 'dist/index.js',
-      format: 'cjs',
+      format: 'esm',
     },
     {
-      file: 'dist/index.esm.js',
-      format: 'esm',
+      file: 'dist/index.cjs',
+      format: 'cjs',
     }
   ],
   external: ['react']

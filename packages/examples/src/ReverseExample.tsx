@@ -1,39 +1,57 @@
-import React, { useEffect, useState } from "react";
-import { useWebWorker } from "@use-web-worker/core";
+import React, { useEffect, useState, useCallback } from "react";
+import { useWebWorker } from "@atom-universe/use-web-worker";
 
 const generateArray = (size: number) =>
   Array.from({ length: size }, (_, i) => i + 1);
 
 export default function ReverseExample() {
-  const [size, setSize] = useState(1000000);
+  const [size, setSize] = useState(100);
   const [list, setList] = useState(() => generateArray(size));
   const [firstItems, setFirstItems] = useState<number[]>([]);
+  const [error, setError] = useState<string | null>(null);
 
   const {
     data: result,
     post: run,
     isRunning,
-  } = useWebWorker<number[]>(() => {
-    const worker = new Worker(
-      new URL("./workers/reverse.worker.ts", import.meta.url)
-    );
-    return worker;
-  });
+  } = useWebWorker<number[] | { error: string }>(
+    new URL("./workers/reverse.worker.ts", import.meta.url).href
+  );
 
-  const handleReverse = () => {
+  const handleReverse = useCallback(() => {
     if (!isRunning) {
-      run({ list });
+      console.log("Starting reverse operation with list length:", list.length);
+      setError(null);
+      run({ list: [...list] });
     }
-  };
+  }, [isRunning, list, run]);
 
-  const handleReset = () => {
+  const handleReset = useCallback(() => {
+    console.log("Resetting array with size:", size);
+    setError(null);
     setList(generateArray(size));
-  };
+  }, [size]);
+
+  const handleSizeChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const newSize = Number(e.target.value);
+      console.log("Size changed to:", newSize);
+      setSize(newSize);
+      setList(generateArray(newSize));
+    },
+    []
+  );
 
   useEffect(() => {
     if (result) {
-      setList(result);
-      setFirstItems(result.slice(0, 5));
+      console.log("Received result from worker");
+      if (Array.isArray(result)) {
+        setList(result);
+        setFirstItems(result.slice(0, 5));
+      } else if ("error" in result) {
+        console.error("Received error from worker:", result.error);
+        setError(result.error);
+      }
     }
   }, [result]);
 
@@ -55,11 +73,17 @@ export default function ReverseExample() {
           <input
             type="number"
             value={size}
-            onChange={(e) => setSize(Number(e.target.value))}
+            onChange={handleSizeChange}
+            min={1}
+            max={10000000}
             style={{ marginLeft: "10px" }}
           />
         </label>
-        <button onClick={handleReset} style={{ marginLeft: "10px" }}>
+        <button
+          onClick={handleReset}
+          style={{ marginLeft: "10px" }}
+          disabled={isRunning}
+        >
           Reset Array
         </button>
       </div>
@@ -81,6 +105,20 @@ export default function ReverseExample() {
         </button>
       </div>
 
+      {error && (
+        <div
+          style={{
+            marginBottom: "20px",
+            padding: "10px",
+            backgroundColor: "#f8d7da",
+            color: "#721c24",
+            borderRadius: "4px",
+          }}
+        >
+          Error: {error}
+        </div>
+      )}
+
       <div>
         <h3>First 5 items:</h3>
         <pre
@@ -100,6 +138,11 @@ export default function ReverseExample() {
           <strong>Note:</strong> Try clicking other buttons while the array is
           being reversed. The UI remains responsive!
         </p>
+      </div>
+
+      <div style={{ marginTop: "20px", fontSize: "14px", color: "#666" }}>
+        <p>Current array length: {list.length}</p>
+        <p>Worker status: {isRunning ? "Running" : "Idle"}</p>
       </div>
     </div>
   );

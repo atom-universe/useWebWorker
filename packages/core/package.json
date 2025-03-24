@@ -1,5 +1,5 @@
 {
-  "name": "@use-web-worker/core",
+  "name": "@atom-universe/use-web-worker",
   "version": "1.0.0",
   "description": "React hooks for Web Workers with TypeScript support",
   "type": "module",
@@ -15,20 +15,44 @@
     }
   },
   "files": [
-    "dist"
+    "dist",
+    "dist/index.d.ts"
   ],
   "scripts": {
     "dev": "node scripts/dev.js --watch",
-    "build": "node scripts/dev.js && rollup -c",
-    "lint": "eslint src --ext .ts,.tsx"
+    "build": "node scripts/dev.js && rolldown -c",
+    "lint": "eslint src --ext .ts,.tsx",
+    "prepublishOnly": "pnpm run build",
+    "clean": "rm -rf dist"
   },
   "keywords": [
     "react",
     "hooks",
     "web-worker",
-    "typescript"
+    "typescript",
+    "worker",
+    "web worker",
+    "react hooks",
+    "concurrent"
   ],
-  "author": "",
+  "author": {
+    "name": "CoderSerio",
+    "email": "carbon1024@foxmail.com",
+    "url": "https://github.com/CoderSerio"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/CoderSerio/useWebWorker.git"
+  },
+  "bugs": {
+    "url": "https://github.com/CoderSerio/useWebWorker/issues"
+  },
+  "homepage": "https://github.com/CoderSerio/useWebWorker#readme",
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
+  "sideEffects": false,
   "license": "MIT",
   "peerDependencies": {
     "react": "^18.2.0"
@@ -41,7 +65,11 @@
     "@typescript-eslint/parser": "^5.0.0",
     "eslint": "^8.0.0",
     "react": "^18.2.0",
+    "rolldown": "1.0.0-beta.6",
     "rollup": "^4.0.0",
     "typescript": "^4.5.0"
+  },
+  "engines": {
+    "node": ">=14.0.0"
   }
 }

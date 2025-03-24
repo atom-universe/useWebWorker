@@ -1,7 +1,6 @@
 import React, { useState } from "react";
-import { useWebWorkerFn } from "@use-web-worker/core";
+import { useWebWorkerFn } from "@atom-universe/use-web-worker";
 
-// Mandelbrot set computation function
 function computeMandelbrot(
   width: number,
   height: number,

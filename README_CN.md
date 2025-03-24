@@ -5,31 +5,29 @@
 
 [English](README.md) | [中文](README_CN.md)
 
-## English
+一个用于简化 Web Worker 使用的 React Hook，支持 TypeScript。
 
-A React hook for easy Web Worker integration with TypeScript support.
+## 特性
 
-### Features
+- 🚀 简洁的 Web Worker 管理 API
+- 💪 完整的 TypeScript 支持
+- 🔄 组件卸载时自动清理
+- ⚡ 不阻塞 UI 操作
+- 📦 零依赖
 
-- 🚀 Simple API for Web Worker management
-- 💪 Full TypeScript support
-- 🔄 Automatic cleanup on unmount
-- ⚡ Non-blocking UI operations
-- 📦 Zero dependencies
-
-### Installation
+## 安装
 
 ```bash
 npm install @atom-universe/use-web-worker
-# or
+# 或者
 pnpm add @atom-universe/use-web-worker
-# or
+# 或者
 yarn add @atom-universe/use-web-worker
 ```
 
-### Usage
+## 使用示例
 
-### File Mode
+### 文件模式
 
 ```tsx
 import { useWebWorker } from '@atom-universe/use-web-worker';
@@ -45,7 +43,7 @@ function FileExample() {
 
   return (
     <button onClick={handleProcess} disabled={isRunning}>
-      {isRunning ? 'Processing...' : 'Start Process'}
+      {isRunning ? '处理中...' : '开始处理'}
     </button>
   );
 }
@@ -53,27 +51,27 @@ function FileExample() {
 // worker.ts
 self.onmessage = (e) => {
   const data = e.data;
-  // Process data
+  // 处理数据
   self.postMessage(data.reverse());
 };
 ```
 
-### Function Mode
+### 函数模式
 
 ```tsx
 import { useWebWorker } from '@atom-universe/use-web-worker';
 
 function FunctionExample() {
   const { data, post, isRunning } = useWebWorker(() => {
-    // Create and configure worker inline
+    // 创建并配置 worker
     const worker = new Worker(
       new URL('./worker.ts', import.meta.url),
       { type: 'module' }
     );
     
-    // Add event listeners or configure worker
+    // 添加事件监听器或配置 worker
     worker.onerror = (error) => {
-      console.error('Worker error:', error);
+      console.error('Worker 错误:', error);
     };
     
     return worker;
@@ -85,29 +83,29 @@ function FunctionExample() {
 
   return (
     <button onClick={handleProcess} disabled={isRunning}>
-      {isRunning ? 'Computing...' : 'Start Computation'}
+      {isRunning ? '计算中...' : '开始计算'}
     </button>
   );
 }
 ```
 
-### API
+## API
 
-#### useWebWorker
+### useWebWorker
 
 ```typescript
 function useWebWorker<Data = any>(
   url: string | (() => Worker) | Worker,
   options?: WorkerOptions
 ): {
-  data: Data | undefined;
-  post: (message: any) => void;
-  terminate: () => void;
-  worker: Worker | undefined;
-  isRunning: boolean;
+  data: Data | undefined;     // Worker 返回的数据
+  post: (message: any) => void;     // 发送消息给 Worker
+  terminate: () => void;      // 终止 Worker
+  worker: Worker | undefined; // Worker 实例
+  isRunning: boolean;        // Worker 是否正在运行
 }
 ```
 
-## License
+## 开源协议
 
-MIT
+MIT 

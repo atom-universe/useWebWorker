@@ -1,5 +1,5 @@
 {
-  "name": "@use-web-worker/examples",
+  "name": "@atom-universe/use-web-worker-examples",
   "private": true,
   "version": "1.0.0",
   "type": "module",
@@ -9,10 +9,9 @@
     "lint": "eslint src --ext .ts,.tsx"
   },
   "dependencies": {
-    "@use-web-worker/core": "workspace:*",
+    "@atom-universe/use-web-worker": "workspace:*",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "scheduler": "^0.23.0"
+    "react-dom": "^18.2.0"
   },
   "devDependencies": {
     "@types/react": "^18.2.0",

@@ -7,7 +7,7 @@ export default function App() {
 
   return (
     <div style={{ padding: "20px", maxWidth: "800px", margin: "0 auto" }}>
-      <h1>Web Worker Hooks Demo</h1>
+      <h1>useWebWorker Examples</h1>
 
       <div style={{ marginBottom: "20px" }}>
         <button
@@ -44,7 +44,12 @@ export default function App() {
           borderRadius: "4px",
         }}
       >
-        {activeTab === "reverse" ? <ReverseExample /> : <ComputeExample />}
+        <div style={{ display: activeTab === "reverse" ? "block" : "none" }}>
+          <ReverseExample />
+        </div>
+        <div style={{ display: activeTab === "compute" ? "block" : "none" }}>
+          <ComputeExample />
+        </div>
       </div>
     </div>
   );
