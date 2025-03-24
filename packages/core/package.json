@@ -1,6 +1,6 @@
 {
   "name": "@atom-universe/use-web-worker",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "React hooks for Web Workers with TypeScript support",
   "type": "module",
   "main": "./dist/index.cjs",
@@ -16,7 +16,9 @@
   },
   "files": [
     "dist",
-    "dist/index.d.ts"
+    "dist/index.d.ts",
+    "README.md",
+    "README_CN.md"
   ],
   "scripts": {
     "dev": "node scripts/dev.js --watch",

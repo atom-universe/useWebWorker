@@ -5,8 +5,6 @@
 
 [English](README.md) | [中文](README_CN.md)
 
-## English
-
 A React hook for easy Web Worker integration with TypeScript support.
 
 ### Features
