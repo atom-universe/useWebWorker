@@ -174,13 +174,8 @@ export default function ComputeExample() {
       )}
 
       <div style={{ marginTop: "20px" }}>
-        <p>
-          <strong>Status:</strong> {workerStatus}
-        </p>
-        <p>
-          <strong>Note:</strong> The Mandelbrot set computation is CPU
-          intensive. Using a Web Worker prevents it from blocking the UI thread.
-        </p>
+        <strong>Note:</strong> The Mandelbrot set computation is CPU intensive.
+        Using a Web Worker prevents it from blocking the UI thread.
       </div>
     </div>
   );

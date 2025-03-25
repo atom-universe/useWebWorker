@@ -10,7 +10,7 @@
 ## 特性
 
 - 🚀 简洁的 Web Worker 管理 API
-- 💪 完整的 TypeScript 支持
+- 💪 完整的 TypeScript 支持1
 - 🔄 组件卸载时自动清理
 - ⚡ 不阻塞 UI 操作
 - 📦 零依赖

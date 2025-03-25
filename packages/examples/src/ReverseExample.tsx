@@ -5,7 +5,7 @@ const generateArray = (size: number) =>
   Array.from({ length: size }, (_, i) => i + 1);
 
 export default function ReverseExample() {
-  const [size, setSize] = useState(100);
+  const [size, setSize] = useState(114_514_00);
   const [list, setList] = useState(() => generateArray(size));
   const [firstItems, setFirstItems] = useState<number[]>([]);
   const [error, setError] = useState<string | null>(null);

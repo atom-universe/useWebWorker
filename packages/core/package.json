@@ -22,7 +22,7 @@
   ],
   "scripts": {
     "dev": "node scripts/dev.js --watch",
-    "build": "node scripts/dev.js && rolldown -c",
+    "build": "node scripts/copy-readme.js && node scripts/dev.js && rolldown -c",
     "lint": "eslint src --ext .ts,.tsx",
     "prepublishOnly": "pnpm run build",
     "clean": "rm -rf dist"
