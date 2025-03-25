@@ -33,8 +33,8 @@ yarn add @atom-universe/use-web-worker
 import { useWebWorker } from '@atom-universe/use-web-worker';
 
 function FileExample() {
-  const { data, post, isRunning } = useWebWorker(
-    new URL('./worker.ts', import.meta.url)
+  const { data, post, isRunning } = useWebWorker<number[]>(
+    new URL('./worker.ts', import.meta.url).href
   );
 
   const handleProcess = () => {
@@ -59,32 +59,46 @@ self.onmessage = (e) => {
 ### Function Mode
 
 ```tsx
-import { useWebWorker } from '@atom-universe/use-web-worker';
+import { useWebWorkerFn } from '@atom-universe/use-web-worker';
 
 function FunctionExample() {
-  const { data, post, isRunning } = useWebWorker(() => {
-    // Create and configure worker inline
-    const worker = new Worker(
-      new URL('./worker.ts', import.meta.url),
-      { type: 'module' }
-    );
-    
-    // Add event listeners or configure worker
-    worker.onerror = (error) => {
-      console.error('Worker error:', error);
-    };
-    
-    return worker;
-  });
+  const { workerFn, workerStatus, workerTerminate } = useWebWorkerFn(
+    (data) => {
+      // Your computation logic here
+      return data.reverse();
+    },
+    {
+      timeout: 30000, // 30 seconds timeout
+      onError: (error) => {
+        console.error('Computation error:', error);
+      },
+    }
+  );
 
-  const handleProcess = () => {
-    post({ type: 'COMPUTE', data: [1, 2, 3] });
+  const handleProcess = async () => {
+    try {
+      const result = await workerFn([1, 2, 3]);
+      console.log('Result:', result);
+    } catch (error) {
+      console.error('Failed to process:', error);
+    }
   };
 
   return (
-    <button onClick={handleProcess} disabled={isRunning}>
-      {isRunning ? 'Computing...' : 'Start Computation'}
-    </button>
+    <div>
+      <button 
+        onClick={handleProcess} 
+        disabled={workerStatus === 'RUNNING'}
+      >
+        {workerStatus === 'RUNNING' ? 'Processing...' : 'Start Process'}
+      </button>
+      
+      {workerStatus === 'RUNNING' && (
+        <button onClick={() => workerTerminate('PENDING')}>
+          Cancel
+        </button>
+      )}
+    </div>
   );
 }
 ```
@@ -98,11 +112,27 @@ function useWebWorker<Data = any>(
   url: string | (() => Worker) | Worker,
   options?: WorkerOptions
 ): {
-  data: Data | undefined;
-  post: (message: any) => void;
-  terminate: () => void;
-  worker: Worker | undefined;
-  isRunning: boolean;
+  data: Data | undefined;         // Data returned by worker 
+  post: (message: any) => void;   // Send msg to Worker
+  terminate: () => void;          // End Worker
+  worker: Worker | undefined;     // Worker instance
+  isRunning: boolean;             // Is Worker running 
+}
+```
+
+#### useWebWorkerFn
+
+```typescript
+function useWebWorkerFn<T extends (...args: any[]) => any>(
+  fn: T,
+  options?: {
+    timeout?: number;
+    onError?: (error: Error) => void;
+  }
+): {
+  workerFn: (...args: Parameters<T>) => Promise<ReturnType<T>>;
+  workerStatus: 'IDLE' | 'RUNNING' | 'ERROR' | 'PENDING';
+  workerTerminate: (status: 'IDLE' | 'ERROR' | 'PENDING') => void;
 }
 ```
 
