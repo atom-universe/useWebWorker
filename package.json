@@ -7,7 +7,7 @@
     "dev": "pnpm -r run dev",
     "build": "pnpm -r run build",
     "lint": "pnpm -r run lint",
-    "example": "pnpm --filter @use-web-worker/core build && pnpm --filter @use-web-worker/examples dev"
+    "example": "cd packages/examples && pnpm dev"
   },
   "keywords": [
     "react",
