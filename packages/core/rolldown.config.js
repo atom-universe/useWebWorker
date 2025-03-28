@@ -5,10 +5,6 @@ export default {
       file: 'dist/index.js',
       format: 'esm',
     },
-    {
-      file: 'dist/index.cjs',
-      format: 'cjs',
-    }
   ],
-  external: ['react']
-}; 
+  external: ['react'],
+};
