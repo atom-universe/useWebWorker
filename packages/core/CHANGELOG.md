@@ -1,24 +1,89 @@
 # Changelog
 
-# [2.0.0](https://github.com/CoderSerio/useWebWorker/compare/v1.0.2...v2.0.0) (2025-03-28)
+All notable changes to this project will be documented in this file.
 
-### Features
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
+and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-- **core:** major API refactor and documentation update ([b823ad7](https://github.com/CoderSerio/useWebWorker/commit/b823ad7f3159a03abf14b4fc2d3259eaea2d7606))
+## [2.0.0](https://github.com/CoderSerio/useWebWorker/compare/v1.0.2...v2.0.0) (2024-03-28)
 
-### BREAKING CHANGES
+### Changed
 
-- **core:** Rename useWebWorkerFn to useWebWorker as default export
+- Renamed `useWebWorkerFn` to `useWebWorker` as the default export
+- Removed the file-based worker API in favor of the function-based API
+- Updated the API to use array destructuring for better ergonomics
+- Improved type safety with automatic type inference
 
-* Rename useWebWorkerFn to useWebWorker as the default export
-* Remove file-based worker API in favor of function-based API
-* Update API to use array destructuring for better ergonomics
-* Improve type safety with automatic type inference
-* Add built-in timeout handling
-* Add comprehensive error handling with customizable callbacks
-* Add support for external and local dependencies
-* Add automatic cleanup of worker resources
-* Add memory leak prevention
-* Update documentation to reflect new API
-* Add detailed feature explanations
-* Add Chinese documentation
+### Added
+
+- Built-in timeout handling
+- Comprehensive error handling with customizable callbacks
+- Support for external and local dependencies
+- Automatic cleanup of worker resources
+- Memory leak prevention
+
+### Removed
+
+- File-based worker API
+- Legacy `useWebWorker` API
+
+## [1.0.2] - 2024-03-25
+
+### Fixed
+
+- Fixed timeout handling in worker status management
+- Improved error handling in worker communication
+- Fixed type definitions for worker status
+
+## [1.0.1] - 2024-03-24
+
+### Added
+
+- Added support for local function dependencies
+- Added support for external dependencies
+- Added timeout option for long-running operations
+
+### Changed
+
+- Improved error handling with more detailed error messages
+- Enhanced type safety with better TypeScript support
+
+## [1.0.0] - 2024-03-24
+
+### Added
+
+- Initial release
+- Function-based Web Worker API
+- TypeScript support
+- Automatic cleanup on unmount
+- Basic error handling
+
+## [0.0.2] - 2024-03-05
+
+### Added
+
+- Added Chinese README documentation
+- Added comprehensive Web Worker examples
+- Added createWorkerBlobUrl utility function
+
+### Changed
+
+- Updated package names for better clarity
+- Restructured project for monorepo setup
+- Updated build and development configurations
+- Cleaned up and improved README documentation
+- Removed unused Rollup plugins and tsup configuration
+
+### Fixed
+
+- Fixed example script in package.json
+- Fixed documentation structure and clarity
+
+## [0.0.1] - 2024-03-05
+
+### Added
+
+- Initial project setup
+- Basic Web Worker functionality
+- TypeScript support
+- Basic documentation

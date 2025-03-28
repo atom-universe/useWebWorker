@@ -1,3 +1,4 @@
+// deprecated
 import { useState, useEffect, useRef } from 'react';
 
 export type UseWebWorkerReturn<Data = any> = [
