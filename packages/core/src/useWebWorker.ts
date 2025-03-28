@@ -1,12 +1,12 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef } from 'react';
 
-export interface UseWebWorkerReturn<Data = any> {
-  data: Data | undefined;
-  post: (message: any) => void;
-  terminate: () => void;
-  worker: Worker | undefined;
-  isRunning: boolean;
-}
+export type UseWebWorkerReturn<Data = any> = [
+  Data | undefined,
+  (message: any) => void,
+  () => void,
+  Worker | undefined,
+  boolean,
+];
 
 type WorkerFn = () => Worker;
 
@@ -16,16 +16,19 @@ function useWebWorker<Data = any>(
 ): UseWebWorkerReturn<Data> {
   const [data, setData] = useState<Data>();
   const [isRunning, setIsRunning] = useState(false);
+  const [worker, setWorker] = useState<Worker>();
   const workerRef = useRef<Worker | null>(null);
 
   useEffect(() => {
-    if (typeof url === "string") {
+    if (typeof url === 'string') {
       workerRef.current = new Worker(url, workerOptions);
-    } else if (typeof url === "function") {
+    } else if (typeof url === 'function') {
       workerRef.current = url();
     } else {
       workerRef.current = url;
     }
+
+    setWorker(workerRef.current);
 
     workerRef.current.onmessage = (e: MessageEvent) => {
       setData(e.data);
@@ -33,13 +36,14 @@ function useWebWorker<Data = any>(
     };
 
     workerRef.current.onerror = (error: ErrorEvent) => {
-      console.error("Error in Web Worker:", error);
+      console.error('Error in Web Worker:', error);
       setIsRunning(false);
     };
 
     return () => {
       workerRef.current?.terminate();
       workerRef.current = null;
+      setWorker(undefined);
     };
   }, [url]);
 
@@ -53,15 +57,10 @@ function useWebWorker<Data = any>(
     if (!workerRef.current) return;
     workerRef.current.terminate();
     workerRef.current = null;
+    setWorker(undefined);
   };
 
-  return {
-    data,
-    post,
-    terminate,
-    worker: workerRef.current ?? undefined,
-    isRunning,
-  };
+  return [data, post, terminate, worker, isRunning];
 }
 
 export default useWebWorker;

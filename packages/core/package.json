@@ -23,9 +23,15 @@
   "scripts": {
     "dev": "node scripts/dev.js --watch",
     "build": "node scripts/copy-readme.js && node scripts/dev.js && rolldown -c",
+    "test:watch": "vitest",
+    "test": "vitest run --coverage",
     "lint": "eslint src --ext .ts,.tsx",
     "prepublishOnly": "pnpm run build",
-    "clean": "rm -rf dist"
+    "clean": "rm -rf dist",
+    "release": "release-it",
+    "release:minor": "release-it minor",
+    "release:major": "release-it major",
+    "release:patch": "release-it patch"
   },
   "keywords": [
     "react",
@@ -60,13 +66,19 @@
     "react": "^18.2.0"
   },
   "devDependencies": {
+    "@testing-library/jest-dom": "^6.6.3",
+    "@testing-library/react": "^14.0.0",
+    "@testing-library/react-hooks": "^8.0.1",
     "@types/react": "^18.2.0",
     "@typescript-eslint/eslint-plugin": "^5.0.0",
     "@typescript-eslint/parser": "^5.0.0",
+    "@vitest/coverage-v8": "^1.0.0",
     "eslint": "^8.0.0",
+    "jsdom": "^24.0.0",
     "react": "^18.2.0",
     "rolldown": "1.0.0-beta.6",
-    "typescript": "^4.5.0"
+    "typescript": "^4.5.0",
+    "vitest": "^1.0.0"
   },
   "engines": {
     "node": ">=14.0.0"

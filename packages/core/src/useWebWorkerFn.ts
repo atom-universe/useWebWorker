@@ -1,7 +1,5 @@
-import { useState, useEffect, useRef } from "react";
-import createWorkerBlobUrl, {
-  WebWorkerStatus,
-} from "./lib/createWorkerBlobUrl";
+import { useState, useEffect, useRef } from 'react';
+import createWorkerBlobUrl, { WebWorkerStatus } from './lib/createWorkerBlobUrl.js';
 
 export interface UseWebWorkerFnOptions {
   timeout?: number;
@@ -12,28 +10,23 @@ export interface UseWebWorkerFnOptions {
   /**
    * An array that contains the local dependencies needed to run the worker
    */
-  localDependencies?: Function[];
+  localDependencies?: ((...args: unknown[]) => unknown)[];
   onError?: (error: Error) => void;
 }
 
-export interface UseWebWorkerFnReturn<T extends (...args: any[]) => any> {
-  workerFn: (...fnArgs: Parameters<T>) => Promise<ReturnType<T>>;
-  workerStatus: WebWorkerStatus;
-  workerTerminate: (status?: WebWorkerStatus) => void;
-}
+export type UseWebWorkerFnReturn<T extends (...args: any[]) => any> = [
+  (...fnArgs: Parameters<T>) => Promise<ReturnType<T>>,
+  WebWorkerStatus,
+  (status?: WebWorkerStatus) => void,
+];
 
 function useWebWorkerFn<T extends (...args: any[]) => any>(
   fn: T,
   options: UseWebWorkerFnOptions = {}
 ): UseWebWorkerFnReturn<T> {
-  const {
-    dependencies = [],
-    localDependencies = [],
-    timeout,
-    onError,
-  } = options;
+  const { dependencies = [], localDependencies = [], timeout, onError } = options;
 
-  const [workerStatus, setWorkerStatus] = useState<WebWorkerStatus>("PENDING");
+  const [workerStatus, setWorkerStatus] = useState<WebWorkerStatus>('PENDING');
   const workerRef = useRef<(Worker & { _url?: string }) | null>(null);
   const promiseRef = useRef<{
     resolve?: (result: ReturnType<T>) => void;
@@ -41,7 +34,7 @@ function useWebWorkerFn<T extends (...args: any[]) => any>(
   }>({});
   const timeoutRef = useRef<number>();
 
-  const workerTerminate = (status: WebWorkerStatus = "PENDING") => {
+  const workerTerminate = (status: WebWorkerStatus = 'PENDING') => {
     if (workerRef.current && workerRef.current._url) {
       workerRef.current.terminate();
       URL.revokeObjectURL(workerRef.current._url);
@@ -58,35 +51,46 @@ function useWebWorkerFn<T extends (...args: any[]) => any>(
     newWorker._url = blobUrl;
 
     newWorker.onmessage = (e: MessageEvent) => {
-      const { resolve = () => {}, reject = () => {} } = promiseRef.current;
+      const { resolve, reject } = promiseRef.current;
       const [status, result] = e.data as [WebWorkerStatus, ReturnType<T>];
 
       switch (status) {
-        case "SUCCESS":
-          resolve(result);
+        case 'SUCCESS': {
+          resolve?.(result);
           workerTerminate(status);
           break;
-        default:
+        }
+        case 'TIMEOUT_EXPIRED': {
+          const timeoutError = new Error('Timeout');
+          onError?.(timeoutError);
+          reject?.(timeoutError);
+          workerTerminate(status);
+          break;
+        }
+        default: {
           const error = new Error(result as string);
           onError?.(error);
-          reject(error);
-          workerTerminate("ERROR");
+          reject?.(error);
+          workerTerminate('ERROR');
           break;
+        }
       }
     };
 
     newWorker.onerror = (e: ErrorEvent) => {
-      const { reject = () => {} } = promiseRef.current;
+      const { reject } = promiseRef.current;
       e.preventDefault();
       const error = new Error(e.message);
       onError?.(error);
-      reject(error);
-      workerTerminate("ERROR");
+      reject?.(error);
+      workerTerminate('ERROR');
     };
 
     if (timeout) {
       timeoutRef.current = window.setTimeout(() => {
-        workerTerminate("TIMEOUT_EXPIRED");
+        const { reject } = promiseRef.current;
+        reject?.(new Error('Timeout'));
+        workerTerminate('TIMEOUT_EXPIRED');
       }, timeout);
     }
 
@@ -97,15 +101,13 @@ function useWebWorkerFn<T extends (...args: any[]) => any>(
     new Promise<ReturnType<T>>((resolve, reject) => {
       promiseRef.current = { resolve, reject };
       workerRef.current?.postMessage([fnArgs]);
-      setWorkerStatus("RUNNING");
+      setWorkerStatus('RUNNING');
     });
 
   const workerFn = (...fnArgs: Parameters<T>) => {
-    if (workerStatus === "RUNNING") {
-      console.error(
-        "[useWebWorkerFn] You can only run one instance of the worker at a time."
-      );
-      return Promise.reject(new Error("Worker is already running"));
+    if (workerStatus === 'RUNNING') {
+      console.error('[useWebWorkerFn] You can only run one instance of the worker at a time.');
+      return Promise.reject(new Error('Worker is already running'));
     }
 
     workerRef.current = generateWorker();
@@ -118,11 +120,7 @@ function useWebWorkerFn<T extends (...args: any[]) => any>(
     };
   }, []);
 
-  return {
-    workerFn,
-    workerStatus,
-    workerTerminate,
-  };
+  return [workerFn, workerStatus, workerTerminate];
 }
 
 export default useWebWorkerFn;

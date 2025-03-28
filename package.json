@@ -6,8 +6,9 @@
   "scripts": {
     "dev:core": "cd packages/core && pnpm dev",
     "build:core": "cd packages/core && pnpm build",
+    "test:core": "cd packages/core && pnpm test",
     "lint:core": "cd packages/core && pnpm lint",
-    "dev:example": "cd packages/examples && pnpm dev",
+    "dev:example": "cd packages/core && pnpm build && cd ../../packages/examples && pnpm dev",
     "prepare": "husky install",
     "lint": "pnpm -r run lint",
     "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md}\""
@@ -23,6 +24,8 @@
   "devDependencies": {
     "@commitlint/cli": "^18.0.0",
     "@commitlint/config-conventional": "^18.0.0",
+    "@release-it/conventional-changelog": "^10.0.0",
+    "@types/node": "^22.13.14",
     "@typescript-eslint/eslint-plugin": "^5.0.0",
     "@typescript-eslint/parser": "^5.0.0",
     "eslint": "^8.0.0",
@@ -30,7 +33,8 @@
     "eslint-plugin-prettier": "^5.0.0",
     "husky": "^8.0.0",
     "lint-staged": "^15.0.0",
-    "prettier": "^3.0.0"
+    "prettier": "^3.0.0",
+    "release-it": "^18.1.2"
   },
   "lint-staged": {
     "*.{ts,tsx,js,jsx}": [

@@ -2,8 +2,8 @@
   "compilerOptions": {
     "target": "ES2015",
     "lib": ["DOM", "DOM.Iterable", "ESNext"],
-    "module": "ESNext",
-    "moduleResolution": "node",
+    "module": "Node16",
+    "moduleResolution": "node16",
     "jsx": "react",
     "strict": true,
     "esModuleInterop": true,
@@ -11,6 +11,6 @@
     "forceConsistentCasingInFileNames": true,
     "resolveJsonModule": true
   },
-  "include": ["src"],
+  "include": ["packages/**/*"],
   "exclude": ["node_modules"]
 }
