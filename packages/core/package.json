@@ -1,6 +1,6 @@
 {
   "name": "@atom-universe/use-web-worker",
-  "version": "1.0.2",
+  "version": "2.0.0",
   "description": "React hooks for Web Workers with TypeScript support",
   "type": "module",
   "main": "./dist/index.cjs",
