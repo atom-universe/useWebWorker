@@ -7,4 +7,12 @@ export default {
     },
   ],
   external: ['react'],
+  minify: true,
+  treeshake: {
+    moduleSideEffects: false,
+    propertyReadSideEffects: false,
+    tryCatchDeoptimization: false,
+  },
+  mangleProps: /^_/,
+  target: 'es2020',
 };
