@@ -1,10 +1,19 @@
 import React, { useState } from 'react';
 import useWebWorker from '@atom-universe/use-web-worker';
 
-function computeMandelbrot(width: number, height: number, maxIterations: number, zoom: number) {
+function computeMandelbrot(
+  width: number,
+  height: number,
+  maxIterations: number,
+  zoom: number,
+  workerContext: Worker
+) {
   const result: number[] = new Array(width * height);
   const centerX = -0.5;
   const centerY = 0;
+  const totalPixels = width * height;
+  let processedPixels = 0;
+  let lastReportedProgress = 0;
 
   for (let y = 0; y < height; y++) {
     for (let x = 0; x < width; x++) {
@@ -23,6 +32,13 @@ function computeMandelbrot(width: number, height: number, maxIterations: number,
       }
 
       result[y * width + x] = iteration;
+
+      processedPixels++;
+      const currentProgress = Math.floor((processedPixels / totalPixels) * 100);
+      if (currentProgress >= lastReportedProgress + 5) {
+        lastReportedProgress = currentProgress;
+        workerContext.postMessage(['PROGRESS', { percent: currentProgress }]);
+      }
     }
   }
 
@@ -34,20 +50,32 @@ export default function ComputeExample() {
   const [maxIterations, setMaxIterations] = useState(1000);
   const [zoom, setZoom] = useState(0.5);
   const [result, setResult] = useState<number[]>([]);
+  const [progress, setProgress] = useState(0);
+  const [computing, setComputing] = useState(false);
 
   const [workerFn, workerStatus, workerTerminate] = useWebWorker(computeMandelbrot, {
     timeout: 30000, // 30 seconds timeout
-    onError: error => {
+    onError: (error: Error) => {
       console.error('Computation error:', error);
+      setComputing(false);
+    },
+    onMessage: (message: { type: string; data: any }) => {
+      if (message.type === 'PROGRESS') {
+        setProgress(message.data.percent);
+      }
     },
   });
 
   const handleCompute = async () => {
     try {
+      setProgress(0);
+      setComputing(true);
       const data = await workerFn(size, size, maxIterations, zoom);
       setResult(data);
+      setComputing(false);
     } catch (error) {
       console.error('Failed to compute:', error);
+      setComputing(false);
     }
   };
 
@@ -128,6 +156,31 @@ export default function ComputeExample() {
           </button>
         )}
       </div>
+
+      {/* 进度条 */}
+      {computing && (
+        <div style={{ marginBottom: '20px' }}>
+          <p>Computing: {progress}% complete</p>
+          <div
+            style={{
+              width: '100%',
+              backgroundColor: '#e9ecef',
+              borderRadius: '4px',
+              height: '20px',
+              overflow: 'hidden',
+            }}
+          >
+            <div
+              style={{
+                width: `${progress}%`,
+                backgroundColor: '#007bff',
+                height: '100%',
+                transition: 'width 0.3s ease-in-out',
+              }}
+            ></div>
+          </div>
+        </div>
+      )}
 
       {result.length > 0 && (
         <div>

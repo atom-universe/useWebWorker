@@ -1,5 +1,6 @@
 import { renderHook, act } from '@testing-library/react';
 import useWebWorkerFn from '../src/useWebWorkerFn.js';
+import { WorkerMessageType } from '../src/lib/createWorkerBlobUrl.js';
 import { vi } from 'vitest';
 
 describe('useWebWorkerFn', () => {
@@ -35,7 +36,7 @@ describe('useWebWorkerFn', () => {
 
     act(() => {
       mockWorker.onmessage?.({
-        data: ['SUCCESS', 3],
+        data: [WorkerMessageType.SUCCESS, 3],
       } as MessageEvent);
     });
 
@@ -57,7 +58,7 @@ describe('useWebWorkerFn', () => {
 
     act(() => {
       mockWorker.onmessage?.({
-        data: ['ERROR', 'Test error'],
+        data: [WorkerMessageType.ERROR, 'Test error'],
       } as MessageEvent);
     });
 
@@ -76,7 +77,7 @@ describe('useWebWorkerFn', () => {
 
     act(() => {
       mockWorker.onmessage?.({
-        data: ['TIMEOUT_EXPIRED', 'Timeout'],
+        data: [WorkerMessageType.TIMEOUT_EXPIRED, 'Timeout'],
       } as MessageEvent);
     });
 
@@ -95,7 +96,7 @@ describe('useWebWorkerFn', () => {
     // 模拟成功响应
     act(() => {
       mockWorker.onmessage?.({
-        data: ['SUCCESS', 'test result'],
+        data: [WorkerMessageType.SUCCESS, 'test result'],
       } as MessageEvent);
     });
 
@@ -105,6 +106,39 @@ describe('useWebWorkerFn', () => {
 
     expect(mockWorker.terminate).toHaveBeenCalled();
     expect(mockURL.revokeObjectURL).toHaveBeenCalledWith('mock-url');
+  });
+
+  it('should handle custom progress messages via onMessage callback', () => {
+    const onMessage = vi.fn();
+
+    const mockOnMessage = (e: MessageEvent) => {
+      const [status, result] = e.data as [string, any];
+
+      if (
+        status !== WorkerMessageType.SUCCESS &&
+        status !== WorkerMessageType.ERROR &&
+        status !== WorkerMessageType.TIMEOUT_EXPIRED
+      ) {
+        onMessage({ type: status, data: result });
+      }
+    };
+
+    mockOnMessage({ data: ['PROGRESS', { percent: 25 }] } as MessageEvent);
+    mockOnMessage({ data: ['PROGRESS', { percent: 50 }] } as MessageEvent);
+    mockOnMessage({ data: ['PROGRESS', { percent: 75 }] } as MessageEvent);
+
+    mockOnMessage({ data: ['STATUS_UPDATE', { status: 'processing' }] } as MessageEvent);
+
+    mockOnMessage({ data: [WorkerMessageType.SUCCESS, 'result'] } as MessageEvent);
+
+    expect(onMessage).toHaveBeenCalledTimes(4);
+    expect(onMessage).toHaveBeenNthCalledWith(1, { type: 'PROGRESS', data: { percent: 25 } });
+    expect(onMessage).toHaveBeenNthCalledWith(2, { type: 'PROGRESS', data: { percent: 50 } });
+    expect(onMessage).toHaveBeenNthCalledWith(3, { type: 'PROGRESS', data: { percent: 75 } });
+    expect(onMessage).toHaveBeenNthCalledWith(4, {
+      type: 'STATUS_UPDATE',
+      data: { status: 'processing' },
+    });
   });
 
   it.skip('should handle worker errors', async () => {

@@ -28,8 +28,8 @@
     "prepublishOnly": "pnpm run build",
     "clean": "rm -rf dist",
     "release": "release-it",
-    "release:minor": "release-it minor",
     "release:major": "release-it major",
+    "release:minor": "release-it minor",
     "release:patch": "release-it patch"
   },
   "keywords": [
