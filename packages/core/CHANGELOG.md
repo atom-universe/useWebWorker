@@ -1,5 +1,11 @@
 # Changelog
 
+# [2.1.0](https://github.com/CoderSerio/useWebWorker/compare/v2.0.3...v2.1.0) (2025-04-07)
+
+### Features
+
+- add progress reporting and custom message handling to useWebWorker 🐹 ([15e09c7](https://github.com/CoderSerio/useWebWorker/commit/15e09c7f60789cca49ec3b2ff1a3752e450f4527))
+
 ## [2.0.3](https://github.com/CoderSerio/useWebWorker/compare/v2.0.2...v2.0.3) (2025-04-03)
 
 ## [2.0.2](https://github.com/CoderSerio/useWebWorker/compare/v2.0.1...v2.0.2) (2025-04-03)
