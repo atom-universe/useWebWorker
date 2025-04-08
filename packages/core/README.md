@@ -15,9 +15,9 @@ A React hook for easy Web Worker integration with TypeScript support.
 - ⚡ Non-blocking UI operations
 - 📦 Zero dependencies
 - ⏱️ Built-in timeout handling
-- 🎯 Function-based worker creation
 - 🔍 Comprehensive error handling
-- 📝 No additional files needed - write your worker logic inline
+- 📊 Progress reporting and custom message passing
+- 🎯 Function-based worker creation - No additional files needed, write your worker logic inline
 
 ### Installation
 
@@ -33,24 +33,46 @@ yarn add @atom-universe/use-web-worker
 
 ```tsx
 import useWebWorker from '@atom-universe/use-web-worker';
+import { useState } from 'react';
 
 function Example() {
+  const [progress, setProgress] = useState(0);
+
   const [workerFn, workerStatus, workerTerminate] = useWebWorker(
-    data => {
-      // Your computation logic here
-      return data.reverse();
+    (data, workerContext) => {
+      const total = data.length;
+      const result = [];
+
+      for (let i = 0; i < total; i++) {
+        result.push(data[i] * 2);
+        // Report progress every 10%
+        if (i % Math.floor(total / 10) === 0) {
+          const percentComplete = Math.floor((i / total) * 100);
+          workerContext.postMessage(['PROGRESS', { percent: percentComplete }]);
+        }
+      }
+
+      return result;
     },
     {
       timeout: 30000, // 30 seconds timeout
       onError: error => {
         console.error('Computation error:', error);
       },
+      onMessage: message => {
+        // Handle progress updates
+        if (message.type === 'PROGRESS') {
+          setProgress(message.data.percent);
+        }
+      },
     }
   );
 
   const handleProcess = async () => {
     try {
-      const result = await workerFn([1, 2, 3]);
+      // Generate array with 1000 items
+      const data = Array.from({ length: 1000 }, (_, i) => i);
+      const result = await workerFn(data);
       console.log('Result:', result);
     } catch (error) {
       console.error('Failed to process:', error);
@@ -65,6 +87,28 @@ function Example() {
 
       {workerStatus === 'RUNNING' && (
         <button onClick={() => workerTerminate('PENDING')}>Cancel</button>
+      )}
+
+      {workerStatus === 'RUNNING' && (
+        <div>
+          <p>Progress: {progress}%</p>
+          <div
+            style={{
+              width: '100%',
+              backgroundColor: '#e9ecef',
+              borderRadius: '4px',
+              height: '20px',
+            }}
+          >
+            <div
+              style={{
+                width: `${progress}%`,
+                backgroundColor: '#007bff',
+                height: '100%',
+              }}
+            />
+          </div>
+        </div>
       )}
     </div>
   );
@@ -81,6 +125,7 @@ function useWebWorker<T extends (...args: any[]) => any>(
     dependencies?: string[]; // External dependencies
     localDependencies?: Function[]; // Local function dependencies
     onError?: (error: Error) => void; // Error callback
+    onMessage?: (message: { type: string; data: any }) => void; // Custom message handler
   }
 ): [
   (...args: Parameters<T>) => Promise<ReturnType<T>>, // Worker function
