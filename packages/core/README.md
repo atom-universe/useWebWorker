@@ -17,7 +17,7 @@ A React hook for easy Web Worker integration with TypeScript support.
 - ⏱️ Built-in timeout handling
 - 🔍 Comprehensive error handling
 - 📊 Progress reporting and custom message passing
-- 🎯 Function-based worker creation - No additional files needed, write your worker logic inline
+- 🎯 Function-based worker creation - No additional files needed - write your worker logic inline
 
 ### Installation
 

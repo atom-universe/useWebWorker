@@ -11,8 +11,11 @@ export default {
   treeshake: {
     moduleSideEffects: false,
     propertyReadSideEffects: false,
-    tryCatchDeoptimization: false,
+    tryCatchDeoptimization: true, // 开启更激进的优化
   },
   mangleProps: /^_/,
-  target: 'es2020',
+  target: 'es2022', // 更现代的目标，减少 polyfill
+  define: {
+    'process.env.NODE_ENV': '"production"',
+  },
 };

@@ -1,5 +1,6 @@
 import React from 'react';
 import ComputeExample from './ComputeExample';
+import { WorkerImportExample } from './WorkerImportExample.js';
 
 export default function App() {
   return (
@@ -14,6 +15,7 @@ export default function App() {
         }}
       >
         <ComputeExample />
+        <WorkerImportExample />
       </div>
     </div>
   );

@@ -56,7 +56,7 @@ function useWebWorkerFn<T extends (...args: any[]) => any>(
 
     newWorker.onmessage = (e: MessageEvent) => {
       const { resolve, reject } = promiseRef.current;
-      const [status, result] = e.data as [string, any];
+      const [status, result] = e.data as [number, any];
 
       switch (status) {
         case WorkerMessageType.SUCCESS: {
@@ -113,7 +113,9 @@ function useWebWorkerFn<T extends (...args: any[]) => any>(
 
   const workerFn = (...fnArgs: Parameters<T>) => {
     if (workerStatus === WorkerMessageType.RUNNING) {
-      console.error('[useWebWorkerFn] You can only run one instance of the worker at a time.');
+      if (process.env.NODE_ENV !== 'production') {
+        console.error('[useWebWorkerFn] You can only run one instance of the worker at a time.');
+      }
       return Promise.reject(new Error('Worker is already running'));
     }
 

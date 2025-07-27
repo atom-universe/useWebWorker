@@ -20,3 +20,6 @@ package-lock.json
 metadata.json
 .eslintcache
 coverage/
+
+tips.md
+packages/vite-plugin/*
