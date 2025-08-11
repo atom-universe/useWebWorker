@@ -22,13 +22,13 @@ export const metadata: Metadata = {
     title: 'useWebWorker - React Hook for Web Workers',
     description: 'A powerful React hook for easy Web Worker integration with TypeScript support.',
     type: 'website',
-    url: 'https://usewebworker.dev',
+    url: 'https://use-web-worker-docs.vercel.app/',
     siteName: 'useWebWorker',
     images: [
       {
-        url: 'https://usewebworker.dev/og.png',
-        width: 1200,
-        height: 630,
+        url: '/uww_1024.png',
+        width: 1024,
+        height: 1024,
         alt: 'useWebWorker - React Hook for Web Workers',
       },
     ],
@@ -37,7 +37,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'useWebWorker - React Hook for Web Workers',
     description: 'A powerful React hook for easy Web Worker integration with TypeScript support.',
-    images: ['https://usewebworker.dev/og.png'],
+    images: ['/uww_1024.png'],
   },
   robots: {
     index: true,
@@ -51,8 +51,7 @@ export const metadata: Metadata = {
       'max-video-preview': -1,
     },
   },
-  // TODO: 临时的，后面有域名了改一下
-  // metadataBase: new URL('https://usewebworker.dev'),
+  metadataBase: new URL('https://use-web-worker-docs.vercel.app/'),
 };
 
 export default function RootLayout({
