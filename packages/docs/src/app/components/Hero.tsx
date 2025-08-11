@@ -1,11 +1,15 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { gsap } from 'gsap';
 import { CodeDemo } from './CodeDemo';
+import { InstallGuide } from './InstallGuide';
 
 export function Hero() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const [isInstallOpen, setIsInstallOpen] = useState(false);
+  const codeDemoRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -87,8 +91,27 @@ export function Hero() {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
+  // Prepare collapsed code demo on mount
+  useEffect(() => {
+    const container = codeDemoRef.current;
+    if (!container) return;
+    gsap.set(container, { height: 0, overflow: 'hidden' });
+  }, []);
+
+  const openCodeDemo = () => {
+    const container = codeDemoRef.current;
+    if (!container) return;
+    gsap.to(container, { height: 'auto', duration: 0.6, ease: 'power2.out' });
+  };
+
+  const toggleInstallPanel = () => {
+    setIsInstallOpen(!isInstallOpen);
+  };
+
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
+      {/* Top-right GitHub button */}
+
       {/* Animated background */}
       <canvas
         ref={canvasRef}
@@ -98,7 +121,7 @@ export function Hero() {
 
       {/* Content */}
       <div className="relative z-10 max-w-7xl mx-auto px-6 py-20">
-        <div className="grid lg:grid-cols-2 gap-12 items-center">
+        <div className="grid lg:grid-cols-2 items-center space-y-12 lg:space-y-0 lg:space-x-12">
           {/* Left side - Text content */}
           <motion.div
             initial={{ opacity: 0, x: -50 }}
@@ -131,16 +154,12 @@ export function Hero() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.6, duration: 0.8 }}
-              className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start"
             >
-              <button className="btn-primary text-lg px-8 py-4">Get Started</button>
-              <button className="glass px-8 py-4 rounded-lg text-lg font-semibold hover:bg-white/10 transition-all">
-                View Examples
-              </button>
+              <InstallGuide isOpen={isInstallOpen} onToggle={toggleInstallPanel} />
             </motion.div>
 
             {/* Stats */}
-            <motion.div
+            {/* <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.8, duration: 0.8 }}
@@ -158,7 +177,7 @@ export function Hero() {
                 <div className="text-2xl font-bold gradient-text">0</div>
                 <div className="text-sm text-gray-400">Dependencies</div>
               </div>
-            </motion.div>
+            </motion.div> */}
           </motion.div>
 
           {/* Right side - Code demo */}

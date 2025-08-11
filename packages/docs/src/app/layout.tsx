@@ -22,7 +22,37 @@ export const metadata: Metadata = {
     title: 'useWebWorker - React Hook for Web Workers',
     description: 'A powerful React hook for easy Web Worker integration with TypeScript support.',
     type: 'website',
+    url: 'https://usewebworker.dev',
+    siteName: 'useWebWorker',
+    images: [
+      {
+        url: 'https://usewebworker.dev/og.png',
+        width: 1200,
+        height: 630,
+        alt: 'useWebWorker - React Hook for Web Workers',
+      },
+    ],
   },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'useWebWorker - React Hook for Web Workers',
+    description: 'A powerful React hook for easy Web Worker integration with TypeScript support.',
+    images: ['https://usewebworker.dev/og.png'],
+  },
+  robots: {
+    index: true,
+    follow: true,
+    nocache: false,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+      'max-video-preview': -1,
+    },
+  },
+  // TODO: 临时的，后面有域名了改一下
+  // metadataBase: new URL('https://usewebworker.dev'),
 };
 
 export default function RootLayout({
@@ -33,6 +63,7 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${inter.variable} ${jetbrainsMono.variable}`}>
       <body className="grid-bg antialiased">{children}</body>
+      <link rel="canonical" href="https://usewebworker.dev" />
     </html>
   );
 }

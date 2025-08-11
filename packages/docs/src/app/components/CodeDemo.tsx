@@ -1,8 +1,10 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
+import { Prism } from 'react-syntax-highlighter';
 import { oneDark } from 'react-syntax-highlighter/dist/esm/styles/prism';
+
+const SyntaxHighlighter = Prism as any;
 
 const codeExample = `import useWebWorker from '@atom-universe/use-web-worker';
 
@@ -56,13 +58,13 @@ export function CodeDemo() {
 
   return (
     <div className="glass p-1 rounded-lg">
-      <div className="flex items-center justify-between p-4 border-b border-white/10">
+      <div className="flex items-center justify-between p-4 my-2">
         <div className="flex items-center space-x-2">
           <div className="w-3 h-3 bg-red-500 rounded-full"></div>
           <div className="w-3 h-3 bg-yellow-500 rounded-full"></div>
           <div className="w-3 h-3 bg-green-500 rounded-full"></div>
         </div>
-        <span className="text-sm text-gray-400">useWebWorker.tsx</span>
+        {/* <span className="text-sm text-gray-400">useWebWorker.tsx</span> */}
       </div>
 
       <div className="overflow-hidden rounded-b-lg">
