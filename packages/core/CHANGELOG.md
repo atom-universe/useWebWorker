@@ -1,5 +1,11 @@
 # Changelog
 
+## [2.1.2-beta.0](https://github.com/CoderSerio/useWebWorker/compare/v2.1.1...v2.1.2-beta.0) (2025-08-11)
+
+### Performance Improvements
+
+- smaller size of bundle ([e4c9d88](https://github.com/CoderSerio/useWebWorker/commit/e4c9d88e48dbadc2c39526ee97793818180906d1))
+
 ## [2.1.1](https://github.com/CoderSerio/useWebWorker/compare/v2.1.0...v2.1.1) (2025-04-08)
 
 # [2.1.0](https://github.com/CoderSerio/useWebWorker/compare/v2.0.3...v2.1.0) (2025-04-07)
