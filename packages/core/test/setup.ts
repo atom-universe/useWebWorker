@@ -1,7 +1,5 @@
 import '@testing-library/jest-dom';
-import { afterEach, beforeAll } from 'vitest';
-import { cleanup } from '@testing-library/react';
-import { vi } from 'vitest';
+import { afterEach, beforeAll, vi } from 'vitest';
 
 // Mock Worker API
 const mockWorker = {
@@ -17,6 +15,12 @@ const mockURL = {
   revokeObjectURL: vi.fn(),
 };
 
+// Mock Blob API
+global.Blob = vi.fn().mockImplementation((content, options) => ({
+  type: options?.type || 'text/javascript',
+  size: content?.length || 0,
+}));
+
 beforeAll(() => {
   // Mock global APIs
   global.URL = mockURL as unknown as typeof URL;
@@ -24,14 +28,24 @@ beforeAll(() => {
 
   // Mock window object if not exists
   if (typeof window === 'undefined') {
-    global.window = {} as any;
+    global.window = {
+      clearTimeout: vi.fn(),
+      setTimeout: vi.fn(),
+    } as any;
   }
 });
 
-// 在每个测试后清理 DOM
+// 在每个测试后清理
 afterEach(() => {
-  cleanup();
   vi.clearAllMocks();
+
+  // Reset mock worker state
+  mockWorker.onmessage = null;
+  mockWorker.onerror = null;
+  mockWorker.postMessage.mockClear();
+  mockWorker.terminate.mockClear();
+  mockURL.createObjectURL.mockClear();
+  mockURL.revokeObjectURL.mockClear();
 });
 
 // Export mock objects for tests to use

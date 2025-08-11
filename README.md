@@ -1,5 +1,3 @@
-# useWebWorker
-
 <div align="center">
   <img src="assets/uww_128.svg" alt="useWebWorker Logo" width="64" height="64" />
   <h1>useWebWorker</h1>
@@ -59,10 +57,10 @@ function App() {
 
 ### useWebWorkerFn
 
-A hook that creates a Web Worker from a function and provides a way to execute it.
+Creates a Web Worker function Hook that provides execution methods.
 
 ```tsx
-const [workerFn, { data, error, loading, terminate }] = useWebWorkerFn(
+const [workerFn, workerStatus, workerTerminate] = useWebWorkerFn(
   fn: T,
   options?: UseWebWorkerFnOptions
 );
@@ -70,14 +68,14 @@ const [workerFn, { data, error, loading, terminate }] = useWebWorkerFn(
 
 #### Parameters
 
-- `fn: T` - The function to run in the Web Worker
+- `fn: T` - Function to run in Web Worker
 - `options?: UseWebWorkerFnOptions` - Configuration options
 
 #### Options
 
 ```tsx
 interface UseWebWorkerFnOptions {
-  dependencies?: string[]; // External script URLs to load
+  dependencies?: string[]; // External script URLs
   localDependencies?: string[]; // Local script paths
   timeout?: number; // Timeout in milliseconds
   onError?: (error: Error) => void; // Error callback
@@ -86,11 +84,9 @@ interface UseWebWorkerFnOptions {
 
 #### Returns
 
-- `workerFn: (...args: Parameters<T>) => Promise<ReturnType<T>>` - Function to execute the worker
-- `data: ReturnType<T> | undefined` - Result from the worker
-- `error: Error | undefined` - Error if any occurred
-- `loading: boolean` - Whether the worker is currently executing
-- `terminate: () => void` - Function to terminate the worker
+- `workerFn: (...args: Parameters<T>) => Promise<ReturnType<T>>` - Function to execute worker
+- `workerStatus: WebWorkerStatus` - Worker status
+- `workerTerminate: (status?: WebWorkerStatus) => void` - Function to terminate worker
 
 ### useWebWorker
 

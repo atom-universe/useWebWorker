@@ -65,7 +65,7 @@ function App() {
 创建一个 Web Worker 函数的 Hook，提供执行方式。
 
 ```tsx
-const [workerFn, { data, error, loading, terminate }] = useWebWorkerFn(
+const [workerFn, workerStatus, workerTerminate] = useWebWorkerFn(
   fn: T,
   options?: UseWebWorkerFnOptions
 );
@@ -90,10 +90,8 @@ interface UseWebWorkerFnOptions {
 #### 返回值
 
 - `workerFn: (...args: Parameters<T>) => Promise<ReturnType<T>>` - 执行 worker 的函数
-- `data: ReturnType<T> | undefined` - worker 的结果
-- `error: Error | undefined` - 发生的错误
-- `loading: boolean` - worker 是否正在执行
-- `terminate: () => void` - 终止 worker 的函数
+- `workerStatus: WebWorkerStatus` - worker 的状态
+- `workerTerminate: (status?: WebWorkerStatus) => void` - 终止 worker 的函数
 
 ### useWebWorker
 
