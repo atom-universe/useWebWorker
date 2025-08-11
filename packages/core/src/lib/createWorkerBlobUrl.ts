@@ -21,10 +21,8 @@ function createWorkerBlobUrl(
   dependencies: string[] = [],
   localDependencies: ((...args: any[]) => any)[] = []
 ) {
-  // Create cache key from function and dependencies
   const cacheKey = `${fn.toString()}_${JSON.stringify(dependencies)}_${localDependencies.length}`;
 
-  // Return cached URL if exists
   if (workerCache.has(cacheKey)) {
     return workerCache.get(cacheKey)!;
   }
@@ -46,7 +44,6 @@ self.onmessage = async function(e) {
   const blob = new Blob([blobCode], { type: 'text/javascript' });
   const url = URL.createObjectURL(blob);
 
-  // Cache the URL
   workerCache.set(cacheKey, url);
 
   return url;

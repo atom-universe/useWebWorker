@@ -1,23 +1,20 @@
 # useWebWorker
 
-[![NPM version](https://img.shields.io/npm/v/@atom-universe/use-web-worker.svg?style=flat)](https://npmjs.com/package/@atom-universe/use-web-worker)
-[![NPM downloads](http://img.shields.io/npm/dm/@atom-universe/use-web-worker.svg?style=flat)](https://npmjs.com/package/@atom-universe/use-web-worker)
+<div align="center">
+  <img src="assets/uww_128.svg" alt="useWebWorker Logo" width="64" height="64" />
+  <h1>useWebWorker</h1>
+  <p>一个功能强大的 React Hook，用于简化 Web Worker 集成，支持 TypeScript，自动清理和全面的错误处理。</p>
+  
+  [![NPM version](https://img.shields.io/npm/v/@atom-universe/use-web-worker.svg?style=flat)](https://npmjs.com/package/@atom-universe/use-web-worker)
+  [![NPM downloads](http://img.shields.io/npm/dm/@atom-universe/use-web-worker.svg?style=flat)](https://npmjs.com/package/@atom-universe/use-web-worker)
+  
+  <p>
+    <strong>📖 <a href="https://use-web-worker-docs.vercel.app/">文档</a></strong> |
+    <strong>🚀 <a href="https://use-web-worker-docs.vercel.app/">在线演示</a></strong>
+  </p>
+</div>
 
 [English](README.md) | [中文](README_CN.md)
-
-一个用于简化 Web Worker 使用的 React Hook，支持 TypeScript。
-
-## 特性
-
-- 🚀 简洁的 Web Worker 管理 API
-- 💪 完整的 TypeScript 支持，自动类型推断
-- 🔄 组件卸载时自动清理
-- ⚡ 不阻塞 UI 操作
-- 📦 零依赖
-- ⏱️ 内置超时处理
-- 🔍 全面的错误处理
-- 📊 进度报告和自定义消息传递
-- 🎯 基于函数的 Worker 创建 - 直接在代码中编写 Worker 逻辑
 
 ## 安装
 
@@ -29,107 +26,139 @@ pnpm add @atom-universe/use-web-worker
 yarn add @atom-universe/use-web-worker
 ```
 
-## 使用示例
+## 特性
+
+- **零依赖** - 纯 React hooks，无外部依赖
+- **函数式 API** - 像调用普通函数一样使用 Web Workers
+- **TypeScript 支持** - 完整的类型安全，支持泛型
+- **自动清理** - 组件卸载时自动终止 Workers
+- **错误处理** - 全面的错误处理和超时支持
+- **性能优化** - Worker 缓存机制，提升性能
+- **轻量级** - 仅 1.91 KB（压缩后）
+
+## 快速开始
+
+### 基本用法
 
 ```tsx
-import useWebWorker from '@atom-universe/use-web-worker';
-import { useState } from 'react';
+import { useWebWorkerFn } from '@atom-universe/use-web-worker';
 
-function Example() {
-  const [progress, setProgress] = useState(0);
+function App() {
+  const [workerFn, { data, error, loading }] = useWebWorkerFn((a: number, b: number) => a + b);
 
-  const [workerFn, workerStatus, workerTerminate] = useWebWorker(
-    (data, workerContext) => {
-      const total = data.length;
-      const result = [];
-
-      for (let i = 0; i < total; i++) {
-        result.push(data[i] * 2);
-        // 每完成10%上报一次进度
-        if (i % Math.floor(total / 10) === 0) {
-          const percentComplete = Math.floor((i / total) * 100);
-          workerContext.postMessage(['PROGRESS', { percent: percentComplete }]);
-        }
-      }
-
-      return result;
-    },
-    {
-      timeout: 30000, // 30 秒超时
-      onError: error => {
-        console.error('计算错误:', error);
-      },
-      onMessage: message => {
-        // 处理进度更新
-        if (message.type === 'PROGRESS') {
-          setProgress(message.data.percent);
-        }
-      },
-    }
-  );
-
-  const handleProcess = async () => {
-    try {
-      // 生成包含1000个元素的数组
-      const data = Array.from({ length: 1000 }, (_, i) => i);
-      const result = await workerFn(data);
-      console.log('结果:', result);
-    } catch (error) {
-      console.error('处理失败:', error);
-    }
+  const handleClick = async () => {
+    const result = await workerFn(1, 2);
+    console.log(result); // 3
   };
 
   return (
     <div>
-      <button onClick={handleProcess} disabled={workerStatus === 'RUNNING'}>
-        {workerStatus === 'RUNNING' ? '处理中...' : '开始处理'}
-      </button>
-
-      {workerStatus === 'RUNNING' && (
-        <button onClick={() => workerTerminate('PENDING')}>取消</button>
-      )}
-
-      {workerStatus === 'RUNNING' && (
-        <div>
-          <p>进度: {progress}%</p>
-          <div
-            style={{
-              width: '100%',
-              backgroundColor: '#e9ecef',
-              borderRadius: '4px',
-              height: '20px',
-            }}
-          >
-            <div
-              style={{
-                width: `${progress}%`,
-                backgroundColor: '#007bff',
-                height: '100%',
-              }}
-            />
-          </div>
-        </div>
-      )}
+      <button onClick={handleClick}>计算</button>
+      {loading && <p>计算中...</p>}
+      {error && <p>错误: {error.message}</p>}
+      {data && <p>结果: {data}</p>}
     </div>
   );
 }
 ```
 
-## API
+### 使用依赖
 
-```typescript
-function useWebWorker<T extends (...args: any[]) => any>(
-  fn: T,
-  options?: {
-    timeout?: number; // 超时时间（毫秒）
-    dependencies?: string[]; // 外部依赖
-    localDependencies?: Function[]; // 本地函数依赖
-    onError?: (error: Error) => void; // 错误回调
-    onMessage?: (message: { type: string; data: any }) => void; // 自定义消息处理器
-  }
-): [
-  (...args: Parameters<T>) => Promise<ReturnType<T>>, // Worker 函数
-  'PENDING' | 'RUNNING' | 'SUCCESS' | 'ERROR' | 'TIMEOUT_EXPIRED', // 状态
-  (status?: WebWorkerStatus) => void, // 终止函数
-];
+```tsx
+import { useWebWorkerFn } from '@atom-universe/use-web-worker';
+
+function App() {
+  const [workerFn] = useWebWorkerFn(
+    (data: number[]) => {
+      // 在 worker 中使用外部库
+      return data.reduce((sum, num) => sum + num, 0);
+    },
+    {
+      dependencies: ['https://cdn.jsdelivr.net/npm/lodash@4.17.21/lodash.min.js'],
+    }
+  );
+
+  const handleClick = async () => {
+    const result = await workerFn([1, 2, 3, 4, 5]);
+    console.log(result); // 15
+  };
+
+  return <button onClick={handleClick}>数组求和</button>;
+}
 ```
+
+## API 参考
+
+### useWebWorkerFn
+
+创建一个 Web Worker 函数的 Hook，提供执行方式。
+
+```tsx
+const [workerFn, { data, error, loading, terminate }] = useWebWorkerFn(
+  fn: T,
+  options?: UseWebWorkerFnOptions
+);
+```
+
+#### 参数
+
+- `fn: T` - 在 Web Worker 中运行的函数
+- `options?: UseWebWorkerFnOptions` - 配置选项
+
+#### 选项
+
+```tsx
+interface UseWebWorkerFnOptions {
+  dependencies?: string[]; // 外部脚本 URL
+  localDependencies?: string[]; // 本地脚本路径
+  timeout?: number; // 超时时间（毫秒）
+  onError?: (error: Error) => void; // 错误回调
+}
+```
+
+#### 返回值
+
+- `workerFn: (...args: Parameters<T>) => Promise<ReturnType<T>>` - 执行 worker 的函数
+- `data: ReturnType<T> | undefined` - worker 的结果
+- `error: Error | undefined` - 发生的错误
+- `loading: boolean` - worker 是否正在执行
+- `terminate: () => void` - 终止 worker 的函数
+
+### useWebWorker
+
+用于更直接控制 Web Worker 的 Hook。
+
+```tsx
+const [data, post, terminate, status] = useWebWorker(
+  script: string | URL,
+  options?: UseWebWorkerOptions
+);
+```
+
+## 性能特性
+
+### Worker 缓存
+
+该库实现了智能的 Worker 缓存机制：
+
+- **重用 Workers** - 避免为相同函数创建新的 Blob URL
+- **内存高效** - 自动管理 Worker 生命周期
+- **性能提升** - 后续执行显著更快
+
+### 包大小
+
+- **压缩后**: 1.91 KB
+- **压缩前**: 6.2 KB
+- **未压缩**: 15.8 KB
+
+## 示例
+
+查看[在线演示](https://use-web-worker-docs.vercel.app/)获取更多示例和交互式演示。
+
+## 贡献
+
+欢迎贡献！请随时提交 Pull Request。
+
+## 许可证
+
+MIT 许可证 - 详情请查看 [LICENSE](LICENSE) 文件。

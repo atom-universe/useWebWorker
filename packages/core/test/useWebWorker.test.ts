@@ -1,105 +1,128 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { renderHook, act } from '@testing-library/react-hooks';
-import useWebWorker from '../src/useWebWorker';
+import { renderHook, act } from '@testing-library/react';
+import useWebWorker from '../src/useWebWorker.js';
+import { vi } from 'vitest';
+import { mockWorker, mockURL } from './setup.js';
 
-/**
- * useWebWorker
- * 测试：
- * 1. 初始化状态
- * 2. 消息发送和接收
- * 3. 错误处理
- * 4. Worker 终止
- * 5. 不同 Worker 创建方式
- */
 describe('useWebWorker', () => {
-  const mockWorker = {
-    postMessage: vi.fn(),
-    terminate: vi.fn(),
-    onmessage: null as ((e: MessageEvent) => void) | null,
-    onerror: null as ((e: ErrorEvent) => void) | null,
-  };
-
   beforeEach(() => {
     vi.clearAllMocks();
-    global.Worker = vi.fn(() => mockWorker as any);
+    // Reset mock worker state
+    mockWorker.onmessage = null;
+    mockWorker.onerror = null;
   });
 
-  it('should initialize with default values', () => {
+  it('should initialize with default values', async () => {
     const { result } = renderHook(() => useWebWorker('worker.js'));
 
+    // Wait for hook to initialize
+    await act(async () => {
+      await new Promise(resolve => setTimeout(resolve, 0));
+    });
+
     // 验证初始状态
-    expect(result.current[0]).toBeUndefined();
-    expect(result.current[1]).toBeDefined();
-    expect(result.current[2]).toBeDefined();
-    expect(result.current[3]).toBeDefined();
-    expect(result.current[4]).toBe(false);
+    expect(result.current[0]).toBeUndefined(); // data
+    expect(result.current[1]).toBeInstanceOf(Function); // post
+    expect(result.current[2]).toBeInstanceOf(Function); // terminate
+    expect(result.current[3]).toBeDefined(); // worker
+    expect(result.current[4]).toBe(false); // isRunning
   });
 
   it('should handle successful message', async () => {
     const { result } = renderHook(() => useWebWorker('worker.js'));
 
-    // 发送消息
-    act(() => {
-      result.current[1]({ type: 'test' });
+    // Wait for hook to initialize
+    await act(async () => {
+      await new Promise(resolve => setTimeout(resolve, 0));
     });
 
-    // 验证运行状态
-    expect(result.current[4]).toBe(true);
-
-    // 模拟接收消息
+    // 发送消息
     act(() => {
-      mockWorker.onmessage?.({ data: 'success' } as MessageEvent);
+      result.current[1]('test message');
+    });
+
+    // 验证状态
+    expect(result.current[4]).toBe(true); // isRunning
+
+    // 模拟成功响应
+    act(() => {
+      if (mockWorker.onmessage) {
+        mockWorker.onmessage({
+          data: 'success response',
+        } as MessageEvent);
+      }
     });
 
     // 验证结果
-    expect(result.current[0]).toBe('success');
-    expect(result.current[4]).toBe(false);
+    expect(result.current[0]).toBe('success response');
+    expect(result.current[4]).toBe(false); // isRunning
   });
 
   it('should handle error', async () => {
     const { result } = renderHook(() => useWebWorker('worker.js'));
 
-    // 发送消息
-    act(() => {
-      result.current[1]({ type: 'test' });
+    // Wait for hook to initialize
+    await act(async () => {
+      await new Promise(resolve => setTimeout(resolve, 0));
     });
 
-    // 验证运行状态
-    expect(result.current[4]).toBe(true);
+    // 发送消息
+    act(() => {
+      result.current[1]('test message');
+    });
 
     // 模拟错误
     act(() => {
-      mockWorker.onerror?.(new ErrorEvent('error'));
+      if (mockWorker.onerror) {
+        mockWorker.onerror({
+          message: 'Worker error',
+          preventDefault: vi.fn(),
+        } as unknown as ErrorEvent);
+      }
     });
 
-    // 验证错误状态
-    expect(result.current[4]).toBe(false);
+    // 验证状态
+    expect(result.current[4]).toBe(false); // isRunning
   });
 
-  it('should terminate worker', () => {
+  it('should terminate worker', async () => {
     const { result } = renderHook(() => useWebWorker('worker.js'));
+
+    // Wait for hook to initialize
+    await act(async () => {
+      await new Promise(resolve => setTimeout(resolve, 0));
+    });
 
     // 终止 worker
     act(() => {
       result.current[2]();
     });
 
-    // 验证终止结果
     expect(mockWorker.terminate).toHaveBeenCalled();
+    expect(result.current[3]).toBeUndefined(); // worker should be undefined
   });
 
-  it('should handle function worker creation', () => {
+  it('should handle function worker creation', async () => {
     const workerFn = () => mockWorker as any;
     const { result } = renderHook(() => useWebWorker(workerFn));
 
+    // Wait for hook to initialize
+    await act(async () => {
+      await new Promise(resolve => setTimeout(resolve, 0));
+    });
+
     // 验证 worker 实例
-    expect(result.current[3]).toBeDefined();
+    expect(result.current[3]).toBe(mockWorker);
   });
 
-  it('should handle direct worker instance', () => {
+  it('should handle direct worker instance', async () => {
     const { result } = renderHook(() => useWebWorker(mockWorker as any));
 
+    // Wait for hook to initialize
+    await act(async () => {
+      await new Promise(resolve => setTimeout(resolve, 0));
+    });
+
     // 验证 worker 实例
-    expect(result.current[3]).toBeDefined();
+    expect(result.current[3]).toBe(mockWorker);
   });
 });
