@@ -3,6 +3,9 @@
 import { useState, useEffect } from 'react';
 import { Prism } from 'react-syntax-highlighter';
 import { oneDark } from 'react-syntax-highlighter/dist/esm/styles/prism';
+import clipboard from 'clipboard-js';
+import { FaCopy, FaCheck } from 'react-icons/fa';
+import { CopyButton } from './CopyButton';
 
 const SyntaxHighlighter = Prism as any;
 
@@ -39,6 +42,7 @@ function App() {
 
 export function CodeDemo() {
   const [mounted, setMounted] = useState(false);
+  const [copied, setCopied] = useState(false);
 
   useEffect(() => {
     setMounted(true);
@@ -57,32 +61,25 @@ export function CodeDemo() {
   }
 
   return (
-    <div className="glass p-1 rounded-lg">
-      <div className="flex items-center justify-between p-4 my-2">
-        <div className="flex items-center space-x-2">
-          <div className="w-3 h-3 bg-red-500 rounded-full"></div>
-          <div className="w-3 h-3 bg-yellow-500 rounded-full"></div>
-          <div className="w-3 h-3 bg-green-500 rounded-full"></div>
-        </div>
-        {/* <span className="text-sm text-gray-400">useWebWorker.tsx</span> */}
+    <div className="glass p-1 rounded-lg pos-relative">
+      <div className="pos-absolute pos-top-2 pos-right-2 pos-z-10">
+        <CopyButton text={codeExample} />
       </div>
 
-      <div className="overflow-hidden rounded-b-lg">
-        <SyntaxHighlighter
-          language="typescript"
-          style={oneDark}
-          customStyle={{
-            margin: 0,
-            background: 'transparent',
-            fontSize: '14px',
-            lineHeight: '1.5',
-          }}
-          showLineNumbers
-          wrapLines
-        >
-          {codeExample}
-        </SyntaxHighlighter>
-      </div>
+      <SyntaxHighlighter
+        language="typescript"
+        style={oneDark}
+        customStyle={{
+          margin: 0,
+          // background: 'transparent',
+          fontSize: '14px',
+          lineHeight: '1.5',
+        }}
+        showLineNumbers
+        wrapLines
+      >
+        {codeExample}
+      </SyntaxHighlighter>
     </div>
   );
 }

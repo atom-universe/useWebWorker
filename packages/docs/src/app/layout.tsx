@@ -62,6 +62,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={`${inter.variable} ${jetbrainsMono.variable}`}>
+      <head>
+        <link rel="icon" href="/uww-icon.svg" type="image/svg+xml" />
+        <link rel="icon" href="/uww-icon.svg" type="image/svg+xml" sizes="any" />
+      </head>
       <body className="grid-bg antialiased">{children}</body>
       <link rel="canonical" href="https://usewebworker.dev" />
     </html>

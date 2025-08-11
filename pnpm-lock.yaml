@@ -110,6 +110,9 @@ importers:
       '@types/three':
         specifier: ^0.178.1
         version: 0.178.1
+      clipboard-js:
+        specifier: ^0.3.6
+        version: 0.3.6
       framer-motion:
         specifier: ^12.23.9
         version: 12.23.9(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
@@ -141,6 +144,9 @@ importers:
       '@tailwindcss/postcss':
         specifier: ^4
         version: 4.1.11
+      '@types/clipboard-js':
+        specifier: ^0.3.2
+        version: 0.3.2
       '@types/node':
         specifier: ^20
         version: 20.17.30
@@ -1662,6 +1668,9 @@ packages:
   '@types/babel__traverse@7.20.6':
     resolution: {integrity: sha512-r1bzfrm0tomOI8g1SzvCaQHo6Lcv6zu0EA+W2kHrt8dyrHQxGzBBL4kdkzIS+jBMV+EYcMAEAqXqYaLJq5rOZg==}
 
+  '@types/clipboard-js@0.3.2':
+    resolution: {integrity: sha512-wXjvSsP3pJ0i7GMyvU9RpoWG2cv/nzAJ1EdwUgX1GrWuPrSsmq1AxdhBtwKtjSczc3JOvwMcgYvlV1TjogXA2w==}
+
   '@types/estree@1.0.6':
     resolution: {integrity: sha512-AYnb1nQyY49te+VRAVgmzfcgjYS91mY5P0TKUDCLEM+gNnA+3T6rWITXRLYCpahpqSQbN5cE+gHpnPyXjHWxcw==}
 
@@ -2269,6 +2278,10 @@ packages:
 
   client-only@0.0.1:
     resolution: {integrity: sha512-IV3Ou0jSMzZrd3pZ48nLkT9DA7Ag1pnPzaiQhpW7c3RbcqqzvzzVu+L8gfqMp/8IM2MQtSiqaCxrrcfu8I8rMA==}
+
+  clipboard-js@0.3.6:
+    resolution: {integrity: sha512-hyrmvbrYCeRBHdiR3KrEz0tmrUTXXEU8HLeGW0Y0icUSwYmAsmc+d6wfE4EDb/TxZmAVJG0eTfMlulCIT+ecfw==}
+    deprecated: Please migrate to https://github.com/lgarron/clipboard-polyfill
 
   cliui@8.0.1:
     resolution: {integrity: sha512-BSeNnyus75C4//NQ9gQt1/csTXyo/8Sb+afLAkzAptFuMsod9HFokGNudZpi/oQV73hnVK+sR+5PVRMd+Dr7YQ==}
@@ -6552,6 +6565,8 @@ snapshots:
     dependencies:
       '@babel/types': 7.26.10
 
+  '@types/clipboard-js@0.3.2': {}
+
   '@types/estree@1.0.6': {}
 
   '@types/estree@1.0.7': {}
@@ -7353,6 +7368,8 @@ snapshots:
   cli-width@4.1.0: {}
 
   client-only@0.0.1: {}
+
+  clipboard-js@0.3.6: {}
 
   cliui@8.0.1:
     dependencies:

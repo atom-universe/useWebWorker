@@ -13,6 +13,7 @@
     "@monaco-editor/react": "^4.7.0",
     "@types/react-syntax-highlighter": "^15.5.13",
     "@types/three": "^0.178.1",
+    "clipboard-js": "^0.3.6",
     "framer-motion": "^12.23.9",
     "gsap": "^3.13.0",
     "next": "15.4.4",
@@ -25,6 +26,7 @@
   "devDependencies": {
     "@eslint/eslintrc": "^3",
     "@tailwindcss/postcss": "^4",
+    "@types/clipboard-js": "^0.3.2",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",

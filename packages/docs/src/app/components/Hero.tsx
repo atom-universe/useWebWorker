@@ -3,6 +3,7 @@
 import { motion } from 'framer-motion';
 import { useEffect, useRef, useState } from 'react';
 import { gsap } from 'gsap';
+import { FaGithub } from 'react-icons/fa';
 import { CodeDemo } from './CodeDemo';
 import { InstallGuide } from './InstallGuide';
 
@@ -138,6 +139,24 @@ export function Hero() {
               <span className="gradient-text">useWebWorker</span>
             </motion.h1>
 
+            {/* Background icon below title */}
+            <motion.div
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 0.05, scale: 1 }}
+              transition={{ delay: 0.8, duration: 1.2 }}
+              className="absolute left-1/2 transform -translate-x-1/2 -z-10"
+              style={{
+                top: 'calc(50% - 100px)',
+                width: '300px',
+                height: '300px',
+                backgroundImage: 'url(/uww-icon.svg)',
+                backgroundSize: 'contain',
+                backgroundRepeat: 'no-repeat',
+                backgroundPosition: 'center',
+                filter: 'blur(3px)',
+              }}
+            />
+
             <motion.p
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -150,13 +169,7 @@ export function Hero() {
               <span className="text-blue-400">comprehensive error handling</span>.
             </motion.p>
 
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.6, duration: 0.8 }}
-            >
-              <InstallGuide isOpen={isInstallOpen} onToggle={toggleInstallPanel} />
-            </motion.div>
+            <InstallGuide isOpen={isInstallOpen} onToggle={toggleInstallPanel} />
 
             {/* Stats */}
             {/* <motion.div
