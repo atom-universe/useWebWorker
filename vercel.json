@@ -2,10 +2,5 @@
   "buildCommand": "cd packages/docs && pnpm install && pnpm build",
   "outputDirectory": "packages/docs/.next",
   "installCommand": "pnpm install",
-  "framework": "nextjs",
-  "functions": {
-    "packages/docs/.next/server/**/*.js": {
-      "maxDuration": 30
-    }
-  }
+  "framework": "nextjs"
 }
