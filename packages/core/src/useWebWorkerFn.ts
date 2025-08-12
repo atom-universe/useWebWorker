@@ -36,16 +36,17 @@ function useWebWorkerFn<T extends (...args: any[]) => any>(
 
   const [workerStatus, setWorkerStatus] = useState<WebWorkerStatus>(WorkerStatusType.PENDING);
   const workerRef = useRef<(Worker & { _url?: string }) | null>(null);
+  /* eslint-disable @typescript-eslint/no-unused-vars */
   const promiseRef = useRef<{
-    resolve?: (result: ReturnType<T>) => void;
-    reject?: (error: Error) => void;
+    resolve?: (value: ReturnType<T>) => void;
+    reject?: (err: Error) => void;
   }>({});
+  /* eslint-enable @typescript-eslint/no-unused-vars */
   const timeoutRef = useRef<number>();
 
   const workerTerminate = (status: WebWorkerStatus = WorkerStatusType.PENDING) => {
     if (workerRef.current && workerRef.current._url) {
       workerRef.current.terminate();
-      URL.revokeObjectURL(workerRef.current._url);
       promiseRef.current = {};
       workerRef.current = null;
       window.clearTimeout(timeoutRef.current);
