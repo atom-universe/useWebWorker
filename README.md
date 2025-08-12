@@ -17,25 +17,21 @@
 
 ## Quick Start
 
-```bash
-npm install @atom-universe/use-web-worker
-```
-
-## Features
-
 - **Zero Dependencies, Lightweight** - Pure React hooks with no external dependencies
 - **Function-like API** - Use Web Workers just like calling regular functions
 - **Automatic Cleanup** - Workers are automatically terminated when components unmount
 
-## Quick Start
+```bash
+npm install @atom-universe/use-web-worker
+```
 
-### Basic Usage
+## Basic Usage
 
 ```tsx
 import { useWebWorkerFn } from '@atom-universe/use-web-worker';
 
 function App() {
-  const [workerFn, { data, error, loading }] = useWebWorkerFn((a: number, b: number) => a + b);
+  const [workerFn, status] = useWebWorkerFn((a: number, b: number) => a + b);
 
   const handleClick = async () => {
     const result = await workerFn(1, 2);
@@ -45,9 +41,7 @@ function App() {
   return (
     <div>
       <button onClick={handleClick}>Calculate</button>
-      {loading && <p>Calculating...</p>}
-      {error && <p>Error: {error.message}</p>}
-      {data && <p>Result: {data}</p>}
+      <div>Current status: {status}</div>
     </div>
   );
 }

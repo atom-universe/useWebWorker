@@ -34,7 +34,7 @@ npm install @atom-universe/use-web-worker
 import { useWebWorkerFn } from '@atom-universe/use-web-worker';
 
 function App() {
-  const [workerFn, { data, error, loading }] = useWebWorkerFn((a: number, b: number) => a + b);
+  const [workerFn, status] = useWebWorkerFn((a: number, b: number) => a + b);
 
   const handleClick = async () => {
     const result = await workerFn(1, 2);
@@ -44,9 +44,7 @@ function App() {
   return (
     <div>
       <button onClick={handleClick}>计算</button>
-      {loading && <p>计算中...</p>}
-      {error && <p>错误: {error.message}</p>}
-      {data && <p>结果: {data}</p>}
+      <div>当前状态: {status}</div>
     </div>
   );
 }
