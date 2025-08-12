@@ -1,5 +1,7 @@
 # Changelog
 
+# [2.2.0](https://github.com/CoderSerio/useWebWorker/compare/v2.1.2-beta.0...v2.2.0) (2025-08-12)
+
 ## [2.1.2-beta.0](https://github.com/CoderSerio/useWebWorker/compare/v2.1.1...v2.1.2-beta.0) (2025-08-11)
 
 ### Performance Improvements
