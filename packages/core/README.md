@@ -1,5 +1,3 @@
-# useWebWorker
-
 <div align="center">
   <img src="assets/uww_128.svg" alt="useWebWorker Logo" width="64" height="64" />
   <h1>useWebWorker</h1>

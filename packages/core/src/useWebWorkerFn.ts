@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import createWorkerBlobUrl, {
   WebWorkerStatus,
-  WorkerMessageType,
+  WorkerStatusType,
 } from './lib/createWorkerBlobUrl.js';
 
 export interface UseWebWorkerFnOptions {
@@ -18,8 +18,12 @@ export interface UseWebWorkerFnOptions {
   onMessage?: (message: any) => void;
 }
 
+type StripWorkerParam<Args extends readonly unknown[]> = Args extends [...infer H, Worker]
+  ? H
+  : Args;
+
 export type UseWebWorkerFnReturn<T extends (...args: any[]) => any> = [
-  (...fnArgs: Parameters<T>) => Promise<ReturnType<T>>,
+  (...fnArgs: StripWorkerParam<Parameters<T>>) => Promise<ReturnType<T>>,
   WebWorkerStatus,
   (status?: WebWorkerStatus) => void,
 ];
@@ -30,7 +34,7 @@ function useWebWorkerFn<T extends (...args: any[]) => any>(
 ): UseWebWorkerFnReturn<T> {
   const { dependencies = [], localDependencies = [], timeout, onError } = options;
 
-  const [workerStatus, setWorkerStatus] = useState<WebWorkerStatus>(WorkerMessageType.PENDING);
+  const [workerStatus, setWorkerStatus] = useState<WebWorkerStatus>(WorkerStatusType.PENDING);
   const workerRef = useRef<(Worker & { _url?: string }) | null>(null);
   const promiseRef = useRef<{
     resolve?: (result: ReturnType<T>) => void;
@@ -38,7 +42,7 @@ function useWebWorkerFn<T extends (...args: any[]) => any>(
   }>({});
   const timeoutRef = useRef<number>();
 
-  const workerTerminate = (status: WebWorkerStatus = WorkerMessageType.PENDING) => {
+  const workerTerminate = (status: WebWorkerStatus = WorkerStatusType.PENDING) => {
     if (workerRef.current && workerRef.current._url) {
       workerRef.current.terminate();
       URL.revokeObjectURL(workerRef.current._url);
@@ -59,23 +63,23 @@ function useWebWorkerFn<T extends (...args: any[]) => any>(
       const [status, result] = e.data as [number, any];
 
       switch (status) {
-        case WorkerMessageType.SUCCESS: {
+        case WorkerStatusType.SUCCESS: {
           resolve?.(result);
-          workerTerminate(WorkerMessageType.SUCCESS);
+          workerTerminate(WorkerStatusType.SUCCESS);
           break;
         }
-        case WorkerMessageType.TIMEOUT_EXPIRED: {
+        case WorkerStatusType.TIMEOUT: {
           const timeoutError = new Error('Timeout');
           onError?.(timeoutError);
           reject?.(timeoutError);
-          workerTerminate(WorkerMessageType.TIMEOUT_EXPIRED);
+          workerTerminate(WorkerStatusType.TIMEOUT);
           break;
         }
-        case WorkerMessageType.ERROR: {
+        case WorkerStatusType.ERROR: {
           const error = new Error(result as string);
           onError?.(error);
           reject?.(error);
-          workerTerminate(WorkerMessageType.ERROR);
+          workerTerminate(WorkerStatusType.ERROR);
           break;
         }
         default: {
@@ -90,29 +94,29 @@ function useWebWorkerFn<T extends (...args: any[]) => any>(
       const error = new Error(e.message);
       onError?.(error);
       reject?.(error);
-      workerTerminate(WorkerMessageType.ERROR);
+      workerTerminate(WorkerStatusType.ERROR);
     };
 
     if (timeout) {
       timeoutRef.current = window.setTimeout(() => {
         const { reject } = promiseRef.current;
         reject?.(new Error('Timeout'));
-        workerTerminate(WorkerMessageType.TIMEOUT_EXPIRED);
+        workerTerminate(WorkerStatusType.TIMEOUT);
       }, timeout);
     }
 
     return newWorker;
   };
 
-  const callWorker = (...fnArgs: Parameters<T>) =>
+  const callWorker = (...fnArgs: StripWorkerParam<Parameters<T>>) =>
     new Promise<ReturnType<T>>((resolve, reject) => {
       promiseRef.current = { resolve, reject };
       workerRef.current?.postMessage([fnArgs]);
-      setWorkerStatus(WorkerMessageType.RUNNING);
+      setWorkerStatus(WorkerStatusType.RUNNING);
     });
 
-  const workerFn = (...fnArgs: Parameters<T>) => {
-    if (workerStatus === WorkerMessageType.RUNNING) {
+  const workerFn = (...fnArgs: StripWorkerParam<Parameters<T>>) => {
+    if (workerStatus === WorkerStatusType.RUNNING) {
       if (process.env.NODE_ENV !== 'production') {
         console.error('[useWebWorkerFn] You can only run one instance of the worker at a time.');
       }

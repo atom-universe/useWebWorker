@@ -20,19 +20,15 @@
 
 ## 快速开始
 
-```bash
-npm install @atom-universe/use-web-worker
-```
-
-## 特性
-
 - **零依赖, 轻量级** - 纯 React hooks，无外部依赖
 - **函数式 API** - 像调用普通函数一样使用 Web Workers
 - **自动清理** - 组件卸载时自动终止 Workers
 
-## 快速开始
+```bash
+npm install @atom-universe/use-web-worker
+```
 
-### 基本用法
+## 基本用法
 
 ```tsx
 import { useWebWorkerFn } from '@atom-universe/use-web-worker';

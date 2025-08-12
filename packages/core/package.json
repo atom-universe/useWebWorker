@@ -30,7 +30,10 @@
     "release": "release-it",
     "release:major": "release-it major",
     "release:minor": "release-it minor",
-    "release:patch": "release-it patch"
+    "release:patch": "release-it patch",
+    "release:alpha": "release-it --preRelease=alpha",
+    "release:beta": "release-it --preRelease=beta",
+    "release:rc": "release-it --preRelease=rc"
   },
   "keywords": [
     "react",

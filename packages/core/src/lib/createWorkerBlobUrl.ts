@@ -1,17 +1,17 @@
-export const enum WorkerMessageType {
+export enum WorkerStatusType {
   SUCCESS = 0,
   ERROR = 1,
-  TIMEOUT_EXPIRED = 2,
+  TIMEOUT = 2,
   RUNNING = 3,
   PENDING = 4,
 }
 
 export type WebWorkerStatus =
-  | WorkerMessageType.PENDING
-  | WorkerMessageType.SUCCESS
-  | WorkerMessageType.ERROR
-  | WorkerMessageType.TIMEOUT_EXPIRED
-  | WorkerMessageType.RUNNING;
+  | WorkerStatusType.PENDING
+  | WorkerStatusType.SUCCESS
+  | WorkerStatusType.ERROR
+  | WorkerStatusType.TIMEOUT
+  | WorkerStatusType.RUNNING;
 
 // Worker cache to avoid creating duplicate blobs
 const workerCache = new Map<string, string>();
@@ -35,9 +35,9 @@ self.onmessage = async function(e) {
   const [args] = e.data;
   try {
     const result = await fnString.apply(null, [...args, self]);
-    self.postMessage([${WorkerMessageType.SUCCESS}, result]);
+    self.postMessage([${WorkerStatusType.SUCCESS}, result]);
   } catch (error) {
-    self.postMessage([${WorkerMessageType.ERROR}, error.message]);
+    self.postMessage([${WorkerStatusType.ERROR}, error.message]);
   }
 }`;
 

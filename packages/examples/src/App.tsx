@@ -1,5 +1,5 @@
 import React from 'react';
-import ComputeExample from './ComputeExample';
+import ComputeExample from './workerFns/mandelbrot';
 // import { WorkerImportExample } from './WorkerImportExample.js';
 
 export default function App() {

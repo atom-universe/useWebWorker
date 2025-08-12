@@ -1,49 +1,6 @@
 import React, { useState } from 'react';
-import useWebWorker from '@atom-universe/use-web-worker';
-
-function computeMandelbrot(
-  width: number,
-  height: number,
-  maxIterations: number,
-  zoom: number,
-  workerContext: Worker
-) {
-  const result: number[] = new Array(width * height);
-  const centerX = -0.5;
-  const centerY = 0;
-  const totalPixels = width * height;
-  let processedPixels = 0;
-  let lastReportedProgress = 0;
-
-  for (let y = 0; y < height; y++) {
-    for (let x = 0; x < width; x++) {
-      const x0 = (x - width / 2) / (width * zoom) + centerX;
-      const y0 = (y - height / 2) / (height * zoom) + centerY;
-
-      let xi = x0;
-      let yi = y0;
-      let iteration = 0;
-
-      while (iteration < maxIterations && xi * xi + yi * yi <= 4) {
-        const xtemp = xi * xi - yi * yi + x0;
-        yi = 2 * xi * yi + y0;
-        xi = xtemp;
-        iteration++;
-      }
-
-      result[y * width + x] = iteration;
-
-      processedPixels++;
-      const currentProgress = Math.floor((processedPixels / totalPixels) * 100);
-      if (currentProgress >= lastReportedProgress + 5) {
-        lastReportedProgress = currentProgress;
-        workerContext.postMessage(['PROGRESS', { percent: currentProgress }]);
-      }
-    }
-  }
-
-  return result;
-}
+import useWebWorker, { WorkerStatusType } from '@atom-universe/use-web-worker';
+import { computeMandelbrot } from './utils';
 
 export default function ComputeExample() {
   const [size, setSize] = useState(300);
@@ -124,24 +81,29 @@ export default function ComputeExample() {
           </label>
         </div>
 
-        <button
-          onClick={handleCompute}
-          disabled={workerStatus === 'RUNNING'}
-          style={{
-            padding: '8px 16px',
-            background: workerStatus === 'RUNNING' ? '#6c757d' : '#007bff',
-            color: 'white',
-            border: 'none',
-            borderRadius: '4px',
-            cursor: workerStatus === 'RUNNING' ? 'not-allowed' : 'pointer',
-          }}
-        >
-          {workerStatus === 'RUNNING' ? 'Computing...' : 'Compute Mandelbrot'}
-        </button>
+        {(() => {
+          const isRunning = workerStatus === WorkerStatusType.RUNNING;
+          return (
+            <button
+              onClick={handleCompute}
+              disabled={isRunning}
+              style={{
+                padding: '8px 16px',
+                background: isRunning ? '#6c757d' : '#007bff',
+                color: 'white',
+                border: 'none',
+                borderRadius: '4px',
+                cursor: isRunning ? 'not-allowed' : 'pointer',
+              }}
+            >
+              {isRunning ? 'Computing...' : 'Compute Mandelbrot'}
+            </button>
+          );
+        })()}
 
-        {workerStatus === 'RUNNING' && (
+        {workerStatus === WorkerStatusType.RUNNING && (
           <button
-            onClick={() => workerTerminate('PENDING')}
+            onClick={() => workerTerminate(WorkerStatusType.PENDING)}
             style={{
               marginLeft: '10px',
               padding: '8px 16px',
