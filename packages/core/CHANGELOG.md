@@ -1,5 +1,15 @@
 # Changelog
 
+## [2.2.1](https://github.com/CoderSerio/useWebWorker/compare/v2.2.0...v2.2.1) (2025-08-12)
+
+### Bug Fixes
+
+- Prevent re-run crash after the first execution when using `useWebWorker`. We no longer revoke the cached worker Blob URL on termination, which previously invalidated the reused URL and caused subsequent runs to fail. Worker termination and timeout handling remain intact.
+
+### Notes
+
+- No API changes. If you report progress from the worker, keep using either `['PROGRESS', payload]` or `{ type: 'PROGRESS', data: payload }`.
+
 # [2.2.0](https://github.com/CoderSerio/useWebWorker/compare/v2.1.2-beta.0...v2.2.0) (2025-08-12)
 
 ## [2.1.2-beta.0](https://github.com/CoderSerio/useWebWorker/compare/v2.1.1...v2.1.2-beta.0) (2025-08-11)
